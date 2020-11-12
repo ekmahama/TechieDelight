@@ -31,43 +31,70 @@ class BinaryTree:
     def preorder(self, start):
         """ root->left->right"""
         ret = []
-        if start:
-            ret.append(start.val)
-            ret = ret + self.preorder(start.left)
-            ret = ret + self.preorder(start.right)
+        stack = collections.deque()
+        cur = start
+        stack.append(cur)
+
+        while stack:
+            cur = stack.pop()
+            ret.append(cur.val)
+
+            if cur.right:
+                stack.append(cur.right)
+
+            if cur.left:
+                stack.append(cur.left)
         return ret
 
     def inorder(self, start):
         """Left->Root->Right"""
         ret = []
-        if start:
-            ret = self.inorder(start.left)
-            ret.append(start.val)
-            ret = ret + self.inorder(start.right)
+        stack = collections.deque()
+        cur = start
+        while cur or stack:
+            if cur:
+                stack.append(cur)
+                cur = cur.left
+            else:
+                cur = stack.pop()
+                ret.append(cur.val)
+                cur = cur.right
         return ret
 
     def postorder(self, start):
         """Left->Right->Root"""
         ret = []
-        if start:
-            ret = self.postorder(start.left)
-            ret = ret + self.postorder(start.right)
-            ret.append(start.val)
+        cur = start
+        stack = collections.deque()
+        stack.append(cur)
+
+        while stack:
+            cur = stack.pop()
+            ret.append(cur.val)
+
+            if cur.left:
+                stack.append(cur.left)
+            if cur.right:
+                stack.append(cur.right)
+
+        return ret[::-1]
+
+    def levelorder_v3(self, start):
+        ret = []
+        queue = collections.deque()
+        queue.append(start)
+        while queue:
+            cur = queue.popleft()
+            ret.append(cur.val)
+
+            if cur.left:
+                queue.append(cur.left)
+            if cur.right:
+                queue.append(cur.right)
         return ret
 
-    def levelorder(self, start):
-        levels = collections.defaultdict(list)
-        if not start:
-            return levels
-
-        def helper(start, level=0):
-            if start:
-                levels[level].append(start.val)
-                helper(start.left, level + 1)
-                helper(start.right, level + 1)
-
-        helper(start)
-        return levels
+    def revlevelorder(self, start):
+        pass
 
 
         # Create a simple tree
@@ -86,9 +113,9 @@ tree.root.right.left = Node(6)
 tree.root.right.right = Node(7)
 
 print(tree.print_tree("preorder"))
-print(tree.print_tree("inorder"))
-print(tree.print_tree("postorder"))
-print(tree.print_tree("levelorder"))
+# print(tree.print_tree("inorder"))
+# print(tree.print_tree("postorder"))
+# print(tree.print_tree("levelorder"))
 
 # Algorithm for Traversing a tree
 # 1. Depth Search First
